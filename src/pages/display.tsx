@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
+//This file takes care of displaying the pokemon data that is queried in the main index page
+
+
+//Build data interface to setup Pokemon[] array in props. This is the format of each object from the JSON
 interface Pokemon {
   id: number;
   name: {
@@ -74,75 +78,74 @@ const PageButton = styled.button<{ active: boolean }>`
 `;
 
 const Display: React.FC<Props> = ({ typedPokemon, pokemonJson }) => {
-  const [selectedOption, setSelectedOption] = useState(typedPokemon);
-  if (!pokemonJson) return null;
-  const PAGE_SIZE = 10;
-  const [currentPage, setCurrentPage] = useState(1);
-  const numPages = Math.ceil(pokemonJson.length / PAGE_SIZE);
-  const startIdx = (currentPage - 1) * PAGE_SIZE;
-  const endIdx = startIdx + PAGE_SIZE;
-  const currentPokemon = pokemonJson.slice(startIdx, endIdx);
+    //Check for prerender errors
+    if (!pokemonJson) return null;
 
-  const handlePageClick = (page: number) => {
-    setCurrentPage(page);
-  };
+    //Setup pagination
+    const PAGE_SIZE = 10;
+    const [currentPage, setCurrentPage] = useState(1);
+    const numPages = Math.ceil(pokemonJson.length / PAGE_SIZE);
+    const startIdx = (currentPage - 1) * PAGE_SIZE;
+    const endIdx = startIdx + PAGE_SIZE;
+    //Use this value to only show the page-specfic(10) pokemon
+    const currentPokemon = pokemonJson.slice(startIdx, endIdx);
 
-  if (selectedOption){
-    console.log(pokemonJson);
-  }
+    const handlePageClick = (page: number) => {
+        setCurrentPage(page);
+    };
 
-  return (
-    <Container>
-      <ListContainer>
-        {currentPokemon.map((pokemon) => (
-          <ListItem key={pokemon.id}>
+    return (
+        <Container>
+        <ListContainer>
+            {currentPokemon.map((pokemon) => (
+            <ListItem key={pokemon.id}>
             <div>
-            <div>
-                <Label>ID:</Label> {pokemon.id}
-              </div>
-              <div>
-                <Label>Name:</Label> {pokemon.name.english}
-              </div>
-              <div>
-                <Label>Type:</Label> {pokemon.type.join(', ')}
-              </div>
-            </div>
-            <div>
-              <div>
-                <Label>HP:</Label> {pokemon.base.HP}
-              </div>
-              <div>
-                <Label>Attack:</Label> {pokemon.base.Attack}
-              </div>
-              <div>
-                <Label>Defense:</Label> {pokemon.base.Defense}
-              </div>
-              <div>
-                <Label>Sp. Attack:</Label> {pokemon.base['Sp. Attack']}
-              </div>
-              <div>
-                <Label>Sp. Defense:</Label> {pokemon.base['Sp. Defense']}
-              </div>
-              <div>
-                <Label>Speed:</Label> {pokemon.base.Speed}
-              </div>
-            </div>
-          </ListItem>
+                <div>
+                    <Label>ID:</Label> {pokemon.id}
+                </div>
+                <div>
+                    <Label>Name:</Label> {pokemon.name.english}
+                </div>
+                <div>
+                    <Label>Type:</Label> {pokemon.type.join(', ')}
+                </div>
+                </div>
+                <div>
+                <div>
+                    <Label>HP:</Label> {pokemon.base.HP}
+                </div>
+                <div>
+                    <Label>Attack:</Label> {pokemon.base.Attack}
+                </div>
+                <div>
+                    <Label>Defense:</Label> {pokemon.base.Defense}
+                </div>
+                <div>
+                    {/* <Label>Sp. Attack:</Label> {pokemon.base['Sp. Attack']} */}
+                </div>
+                <div>
+                   {/*  <Label>Sp. Defense:</Label> {pokemon.base['Sp. Defense']} */}
+                </div>
+                <div>
+                    <Label>Speed:</Label> {pokemon.base.Speed}
+                </div>
+                </div>
+            </ListItem>
         ))}
-      </ListContainer>
-      <Pagination>
-        {[...Array(numPages)].map((_, i) => (
-          <PageButton
-            key={i}
-            onClick={() => handlePageClick(i + 1)}
-            active={currentPage === i + 1}
-          >
-            {i + 1}
-          </PageButton>
-        ))}
-      </Pagination>
-    </Container>
-  );
+        </ListContainer>
+        <Pagination>
+            {[...Array(numPages)].map((_, i) => (
+            <PageButton
+                key={i}
+                onClick={() => handlePageClick(i + 1)}
+                active={currentPage === i + 1}
+            >
+                {i + 1}
+            </PageButton>
+            ))}
+        </Pagination>
+        </Container>
+    );
 };
 
 export default Display;

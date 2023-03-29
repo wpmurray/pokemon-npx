@@ -37,37 +37,41 @@ interface Pokemon {
 
 export default function Home() {
 
-  const [pokemonType, setPokemonTypes] = useState<string[]>([]);
-  useEffect(() => {
-    fetchPokemonTypes();
-  }, []);
-  const fetchPokemonTypes = () => {
-    fetch('http://localhost:8000/types')
-    .then((response: Response) => response.json())
+    //Setup initial type request, this won't need to run after initial load
+    const [pokemonType, setPokemonTypes] = useState<string[]>([]);
+    useEffect(() => {
+      fetchPokemonTypes();
+    }, []);
+    const fetchPokemonTypes = () => {
+      fetch('http://localhost:8000/types')
+        .then((response: Response) => response.json())
         .then((types: string[]) => {
         setPokemonTypes(types);
-    })
-    .catch((error: Error) => console.error(error));
-  };
-  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
-  /* useEffect(() => {
-    fetchPokemon('');
-  }, []); */
-  const fetchPokemon = (type: string) => {
-    fetch(`http://localhost:8000/pokemon?type=${type}`)
-    .then((response: Response) => response.json())
+      })
+        .catch((error: Error) => console.error(error));
+    };
+
+    //Setup pokemon data query
+    const [pokemon, setPokemon] = useState<Pokemon[]>([]);
+    //useEffect is below on line 70 to get selectedType changes
+    const fetchPokemon = (type: string) => {
+      fetch(`http://localhost:8000/pokemon?type=${type}`)
+        .then((response: Response) => response.json())
         .then((pokemon: Pokemon[]) => {
         setPokemon(pokemon);
-    })
-    .catch((error: Error) => console.error(error));
-  };
+      })
+        .catch((error: Error) => console.error(error));
+    };
 
+  //This allows the fetchPokemon query to run with the requested type each time it changes
   const [selectedType, setSelectedType] = useState<string>('');
 
+  //This changes the query when the selectedtype is updateed
   useEffect(() => {
     fetchPokemon(selectedType);
   }, [selectedType]);
 
+  //This sets the state of selected option and is used in onChange in Dropdown component
   const handleTypeChange = (selectedOption: { label: string; value: string }) => {
     setSelectedType(selectedOption.value);
   };
@@ -78,7 +82,6 @@ export default function Home() {
     <title>Pokemon</title>
     <meta name="description" content="View Pokemon" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.ico" />
   </Head>
   <Header>
       <Title>Pokemon</Title>
@@ -106,12 +109,6 @@ export default function Home() {
         )}
       </main>
     </div>
-    {/* <div className={styles.center}>
-      <Dropdown options={pokemonType.map(d => ({ value: d, label: d }))}
-      onChange={handleTypeChange}
-      />
-      {selectedType &&  <Display typedPokemon={selectedType} pokemonJson={pokemon}></Display>}
-    </div> */}
   </main>
 </>
 
